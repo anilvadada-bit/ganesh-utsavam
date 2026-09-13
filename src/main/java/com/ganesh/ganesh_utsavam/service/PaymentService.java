@@ -37,14 +37,25 @@ public class PaymentService {
      * ============================================================
      */
     public String createOrder(BigDecimal amount) throws Exception {
+        if (amount == null) {
+    throw new IllegalArgumentException(
+            "Donation amount is required"
+    );
+}
 
-        if (amount == null ||
-                amount.compareTo(BigDecimal.ZERO) <= 0) {
+if (amount.compareTo(BigDecimal.valueOf(10)) < 0) {
+    throw new IllegalArgumentException(
+            "Minimum donation amount is ₹10"
+    );
+}
 
-            throw new IllegalArgumentException(
-                    "Donation amount must be greater than zero"
-            );
-        }
+if (amount.compareTo(BigDecimal.valueOf(100000)) > 0) {
+    throw new IllegalArgumentException(
+            "Maximum donation amount is ₹1,00,000"
+    );
+}
+
+  
 
         long amountInPaise = amount
                 .multiply(BigDecimal.valueOf(100))
