@@ -1,0 +1,2733 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard - Ganesh Utsavam</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f5f6fa;
+            color: #222;
+        }
+
+        /* HEADER */
+
+        .header {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid #ddd;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+        }
+
+        .header p {
+            margin-top: 5px;
+            color: #777;
+        }
+
+        .home-btn {
+            text-decoration: none;
+            background: #f57c00;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .logout-btn {
+            border: none;
+            background: #c62828;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .logout-btn:hover {
+            background: #a51f1f;
+        }
+
+        /* CONTAINER */
+
+        .container {
+            max-width: 1250px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* MESSAGE */
+
+        .message {
+            padding: 14px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .message.success {
+            display: block;
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .message.error {
+            display: block;
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        /* SUMMARY CARDS */
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+
+            box-shadow:
+                0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .card h3 {
+            color: #777;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .number {
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        /* DONATION BREAKDOWN */
+
+        .breakdown-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .breakdown-card {
+            background: #f8f9fb;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .breakdown-card h3 {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 8px;
+        }
+
+        .breakdown-amount {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .breakdown-counts {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .count-card {
+            background: #f8f9fb;
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 18px;
+        }
+
+        .count-card h3 {
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 8px;
+        }
+
+        .count-number {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+
+        /* DONATION SEARCH & FILTERS */
+
+        .donation-filters {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr auto;
+            gap: 12px;
+            margin-bottom: 18px;
+            align-items: end;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .filter-group label {
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #ddd;
+            border-radius: 7px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #f57c00;
+            box-shadow: 0 0 0 2px rgba(245, 124, 0, 0.12);
+        }
+
+        .clear-filters-btn {
+            border: none;
+            background: #eeeeee;
+            color: #444;
+            padding: 11px 16px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .clear-filters-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .donation-filter-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 25px;
+            color: #777;
+        }
+
+        /* REPORT & EXPORT BUTTONS */
+
+        .report-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .report-btn {
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            background: #f57c00;
+            color: white;
+        }
+
+        .report-btn:hover {
+            opacity: 0.9;
+        }
+
+        .report-btn.secondary {
+            background: #455a64;
+        }
+
+        .report-btn.success {
+            background: #2e7d32;
+        }
+
+        .report-btn.info {
+            background: #1565c0;
+        }
+
+        .report-note {
+            margin-top: 10px;
+            color: #777;
+            font-size: 13px;
+        }
+
+        /* SECTIONS */
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+
+            box-shadow:
+                0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .section h2 {
+            margin-bottom: 20px;
+        }
+
+        /* EXPENSE FORM */
+
+        .expense-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+
+            border: 1px solid #ccc;
+            border-radius: 6px;
+
+            font-size: 15px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .add-expense-btn {
+            background: #f57c00;
+            color: white;
+
+            border: none;
+            border-radius: 6px;
+
+            padding: 13px 20px;
+
+            font-size: 15px;
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .add-expense-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* TABLE */
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 13px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            white-space: nowrap;
+        }
+
+        th {
+            background: #f8f8f8;
+            font-size: 14px;
+        }
+
+        /* STATUS */
+
+        .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* DELETE */
+
+        .delete-btn {
+            border: none;
+            background: #ffebee;
+            color: #c62828;
+
+            padding: 7px 12px;
+            border-radius: 5px;
+
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .delete-btn:hover {
+            background: #ffcdd2;
+        }
+
+        /* LOADING */
+
+        .loading {
+            text-align: center;
+            padding: 25px;
+            color: #777;
+        }
+
+        /* BALANCE */
+
+        .negative {
+            color: #c62828;
+        }
+
+        .positive {
+            color: #2e7d32;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 900px) {
+            .report-buttons {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .report-buttons {
+                grid-template-columns: 1fr;
+            }
+
+
+            .header {
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 18px;
+            }
+
+            .header p {
+                font-size: 12px;
+            }
+
+            .home-btn {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .header-actions {
+                gap: 6px;
+            }
+
+            .logout-btn {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .container {
+                padding: 0 12px;
+                margin: 20px auto;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .expense-form {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full {
+                grid-column: auto;
+            }
+
+            .breakdown-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .breakdown-counts {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                padding: 18px;
+            }
+
+            th,
+            td {
+                font-size: 13px;
+                padding: 10px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<header class="header">
+
+    <div>
+
+        <h1>🙏 Ganesh Utsavam</h1>
+
+        <p>Administration Dashboard</p>
+
+    </div>
+
+    <div class="header-actions">
+
+        <a href="/" class="home-btn">
+            Public Website
+        </a>
+
+        <button type="button"
+                class="logout-btn"
+                onclick="logoutAdmin()">
+            Logout
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <div id="message"
+         class="message">
+    </div>
+
+
+    <!-- SUMMARY -->
+
+    <section class="cards">
+
+        <div class="card">
+
+            <h3>Total Donation Records</h3>
+
+            <div class="number"
+                 id="totalDonations">
+                -
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>Successful Donations</h3>
+
+            <div class="number"
+                 id="successfulDonations">
+                -
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>Total Donations</h3>
+
+            <div class="number"
+                 id="totalAmount">
+                ₹0.00
+            </div>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>Total Expenses</h3>
+
+            <div class="number"
+                 id="totalExpenses">
+                ₹0.00
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- BALANCE -->
+
+    <section class="section">
+
+        <h2>📊 Financial Summary</h2>
+
+        <p>
+            Successful Donations:
+            <strong id="summaryDonations">
+                ₹0.00
+            </strong>
+        </p>
+
+        <p style="margin-top:10px;">
+            Total Expenses:
+            <strong id="summaryExpenses">
+                ₹0.00
+            </strong>
+        </p>
+
+        <p style="margin-top:15px; font-size:22px;">
+
+            Available Balance:
+
+            <strong id="balance">
+                ₹0.00
+            </strong>
+
+        </p>
+
+    </section>
+
+
+    <!-- DONATION BREAKDOWN -->
+
+    <section class="section">
+
+        <h2>📊 Donation Breakdown</h2>
+
+        <div class="breakdown-grid">
+
+            <div class="breakdown-card">
+                <h3>💳 Online Razorpay</h3>
+                <div class="breakdown-amount" id="onlineAmount">
+                    ₹0.00
+                </div>
+            </div>
+
+            <div class="breakdown-card">
+                <h3>💵 Cash</h3>
+                <div class="breakdown-amount" id="cashAmount">
+                    ₹0.00
+                </div>
+            </div>
+
+            <div class="breakdown-card">
+                <h3>📱 UPI</h3>
+                <div class="breakdown-amount" id="upiAmount">
+                    ₹0.00
+                </div>
+            </div>
+
+            <div class="breakdown-card">
+                <h3>🏦 Bank Transfer</h3>
+                <div class="breakdown-amount" id="bankTransferAmount">
+                    ₹0.00
+                </div>
+            </div>
+
+        </div>
+
+        <div class="breakdown-counts">
+
+            <div class="count-card">
+                <h3>💳 Online Donations</h3>
+                <div class="count-number" id="onlineDonations">
+                    0
+                </div>
+            </div>
+
+            <div class="count-card">
+                <h3>💵 Offline Donations</h3>
+                <div class="count-number" id="offlineDonations">
+                    0
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- REPORTS & EXPORT -->
+
+    <section class="section">
+
+        <h2>📥 Reports & Export</h2>
+
+        <p class="report-note">
+            Export donation and expense data as CSV files. CSV files can be opened directly in Microsoft Excel or Google Sheets.
+        </p>
+
+        <div class="report-buttons">
+
+            <button
+                type="button"
+                class="report-btn"
+                onclick="exportFilteredDonations()">
+                📥 Filtered Donations
+            </button>
+
+            <button
+                type="button"
+                class="report-btn secondary"
+                onclick="exportAllDonations()">
+                📋 All Donations
+            </button>
+
+            <button
+                type="button"
+                class="report-btn success"
+                onclick="exportExpenses()">
+                💸 Expenses
+            </button>
+
+            <button
+                type="button"
+                class="report-btn info"
+                onclick="exportFinancialSummary()">
+                📊 Financial Summary
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ADD EXPENSE -->
+     <!-- OFFLINE DONATION -->
+
+<section class="section">
+
+    <h2>🙏 Add Offline Donation</h2>
+
+    <form id="offlineDonationForm"
+          class="expense-form">
+
+        <div class="form-group">
+
+            <label for="offlineDonorName">
+                Donor Name
+            </label>
+
+            <input
+                type="text"
+                id="offlineDonorName"
+                placeholder="Enter donor name"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="offlineMobileNumber">
+                Mobile Number
+            </label>
+
+            <input
+                type="tel"
+                id="offlineMobileNumber"
+                placeholder="Enter 10-digit mobile number"
+                maxlength="10"
+                pattern="[0-9]{10}"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="offlineAmount">
+                Donation Amount
+            </label>
+
+            <input
+                type="number"
+                id="offlineAmount"
+                placeholder="Enter amount"
+                min="1"
+                step="0.01"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="offlinePaymentMode">
+                Payment Mode
+            </label>
+
+            <select
+                id="offlinePaymentMode"
+                required
+            >
+
+                <option value="">
+                    Select Payment Mode
+                </option>
+
+                <option value="CASH">
+                    CASH
+                </option>
+
+                <option value="UPI">
+                    UPI
+                </option>
+
+                <option value="BANK TRANSFER">
+                    BANK TRANSFER
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-group full">
+
+            <label for="offlineReferenceNumber">
+                Reference Number
+                <span style="font-weight:normal;color:#777;">
+                    (Optional for cash)
+                </span>
+            </label>
+
+            <input
+                type="text"
+                id="offlineReferenceNumber"
+                placeholder="UPI / Bank transaction reference"
+                maxlength="100"
+            >
+
+        </div>
+
+
+        <div class="form-group full">
+
+            <label for="offlineNotes">
+                Notes
+            </label>
+
+            <textarea
+                id="offlineNotes"
+                placeholder="Optional notes"
+                maxlength="500"
+            ></textarea>
+
+        </div>
+
+
+        <div class="form-group full">
+
+            <button
+                type="submit"
+                class="add-expense-btn">
+
+                🙏 Add Offline Donation
+
+            </button>
+
+        </div>
+
+    </form>
+
+</section>
+
+    <section class="section">
+
+        <h2>💸 Add New Expense</h2>
+
+        <form id="expenseForm"
+              class="expense-form">
+
+            <div class="form-group">
+
+                <label for="category">
+                    Expense Category
+                </label>
+
+                <select id="category"
+                        required>
+
+                    <option value="">
+                        Select Category
+                    </option>
+
+                    <option value="Decoration">
+                        Decoration
+                    </option>
+
+                    <option value="Food">
+                        Food
+                    </option>
+
+                    <option value="Sound System">
+                        Sound System
+                    </option>
+
+                    <option value="Flowers">
+                        Flowers
+                    </option>
+
+                    <option value="Pooja Materials">
+                        Pooja Materials
+                    </option>
+
+                    <option value="Electricity">
+                        Electricity
+                    </option>
+
+                    <option value="Transportation">
+                        Transportation
+                    </option>
+
+                    <option value="Other">
+                        Other
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="expenseAmount">
+                    Amount
+                </label>
+
+                <input
+                    type="number"
+                    id="expenseAmount"
+                    placeholder="Enter amount"
+                    min="1"
+                    step="0.01"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-group full">
+
+                <label for="description">
+                    Description
+                </label>
+
+                <textarea
+                    id="description"
+                    placeholder="Enter expense description"
+                    maxlength="500"
+                ></textarea>
+
+            </div>
+
+
+            <div class="form-group full">
+
+                <button
+                    type="submit"
+                    class="add-expense-btn">
+
+                    💸 Add Expense
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <!-- EXPENSE TABLE -->
+
+    <section class="section">
+
+        <h2>💸 Expense History</h2>
+
+        <div id="expenseLoading"
+             class="loading">
+
+            Loading expenses...
+
+        </div>
+
+        <div class="table-container">
+
+            <table id="expenseTable"
+                   style="display:none;">
+
+                <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Description</th>
+                    <th>Date</th>
+                    <th>Action</th>
+
+                </tr>
+
+                </thead>
+
+                <tbody id="expenseTableBody">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- DONATION TABLE -->
+
+    <section class="section">
+
+        <h2>🙏 Donation History</h2>
+
+        <div class="donation-filters">
+
+            <div class="filter-group">
+                <label for="donationSearch">Search</label>
+                <input
+                    type="search"
+                    id="donationSearch"
+                    placeholder="Name, mobile or transaction ID"
+                    autocomplete="off"
+                >
+            </div>
+
+            <div class="filter-group">
+                <label for="donationPaymentFilter">Payment Mode</label>
+                <select id="donationPaymentFilter">
+                    <option value="ALL">All Modes</option>
+                    <option value="RAZORPAY">Razorpay</option>
+                    <option value="CASH">Cash</option>
+                    <option value="UPI">UPI</option>
+                    <option value="BANK TRANSFER">Bank Transfer</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="donationStatusFilter">Status</label>
+                <select id="donationStatusFilter">
+                    <option value="ALL">All Statuses</option>
+                    <option value="SUCCESS">Success</option>
+                    <option value="PENDING">Pending</option>
+                    <option value="FAILED">Failed</option>
+                </select>
+            </div>
+
+            <button
+                type="button"
+                class="clear-filters-btn"
+                id="clearDonationFilters">
+                Clear Filters
+            </button>
+
+        </div>
+
+        <div class="donation-filter-summary">
+            <span id="donationFilterSummary">Showing 0 donations</span>
+        </div>
+
+        <div id="donationLoading"
+             class="loading">
+
+            Loading donations...
+
+        </div>
+
+        <div class="table-container">
+
+            <table id="donationTable"
+                   style="display:none;">
+
+                <thead>
+
+                <tr>
+
+                    <th>ID</th>
+                    <th>Donor Name</th>
+                    <th>Mobile</th>
+                    <th>Amount</th>
+                    <th>Payment Mode</th>
+                    <th>Transaction ID</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Receipt</th>
+
+                </tr>
+
+                </thead>
+
+                <tbody id="donationTableBody">
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+    const expenseForm =
+        document.getElementById("expenseForm");
+
+        const offlineDonationForm =
+    document.getElementById(
+        "offlineDonationForm"
+    );
+    /*
+ * ==========================================
+ * ADD OFFLINE DONATION
+ * ==========================================
+ */
+
+offlineDonationForm.addEventListener(
+    "submit",
+    async function (event) {
+
+        event.preventDefault();
+
+
+        const donorName =
+            document.getElementById(
+                "offlineDonorName"
+            ).value.trim();
+
+
+        const mobileNumber =
+            document.getElementById(
+                "offlineMobileNumber"
+            ).value.trim();
+
+
+        const amount =
+            document.getElementById(
+                "offlineAmount"
+            ).value;
+
+
+        const paymentMode =
+            document.getElementById(
+                "offlinePaymentMode"
+            ).value;
+
+
+        const referenceNumber =
+            document.getElementById(
+                "offlineReferenceNumber"
+            ).value.trim();
+
+
+        const notes =
+            document.getElementById(
+                "offlineNotes"
+            ).value.trim();
+
+
+        if (!donorName) {
+
+            showMessage(
+                "Donor name is required.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (!/^[0-9]{10}$/.test(
+            mobileNumber
+        )) {
+
+            showMessage(
+                "Enter a valid 10-digit mobile number.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (
+            !amount ||
+            Number(amount) <= 0
+        ) {
+
+            showMessage(
+                "Donation amount must be greater than zero.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        if (!paymentMode) {
+
+            showMessage(
+                "Please select a payment mode.",
+                "error"
+            );
+
+            return;
+        }
+
+
+        try {
+
+            const csrf =
+                await getCsrfToken();
+
+
+            const response =
+                await fetch(
+                    "/api/admin/donations/offline",
+                    {
+                        method: "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json",
+
+                            [csrf.headerName]:
+                                csrf.token
+                        },
+
+                        body: JSON.stringify({
+
+                            donorName:
+                                donorName,
+
+                            mobileNumber:
+                                mobileNumber,
+
+                            amount:
+                                Number(amount),
+
+                            paymentMode:
+                                paymentMode,
+
+                            referenceNumber:
+                                referenceNumber,
+
+                            notes:
+                                notes
+
+                        })
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Unable to add offline donation"
+                );
+
+            }
+
+
+            const result =
+                await response.json();
+
+
+            offlineDonationForm.reset();
+
+
+            showMessage(
+                "Offline donation added successfully. Donation ID: #" +
+                result.donationId,
+                "success"
+            );
+
+
+            await loadDashboard();
+
+
+        } catch (error) {
+
+            console.error(
+                "Offline donation error:",
+                error
+            );
+
+
+            showMessage(
+                "Failed to add offline donation. Please try again.",
+                "error"
+            );
+
+        }
+
+    }
+);
+
+
+    /*
+     * ==========================================
+     * CSRF TOKEN
+     * ==========================================
+     */
+
+    async function getCsrfToken() {
+
+        const response = await fetch("/csrf");
+
+        if (!response.ok) {
+            throw new Error(
+                "Unable to get CSRF token"
+            );
+        }
+
+        return await response.json();
+    }
+
+
+    /*
+     * ==========================================
+     * ADMIN LOGOUT
+     * ==========================================
+     */
+
+    async function logoutAdmin() {
+
+        const confirmed = confirm(
+            "Are you sure you want to logout?"
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        try {
+
+            const csrf = await getCsrfToken();
+
+            const response = await fetch(
+                "/logout",
+                {
+                    method: "POST",
+                    headers: {
+                        [csrf.headerName]: csrf.token
+                    }
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Logout failed");
+            }
+
+            window.location.href = "/";
+
+        } catch (error) {
+
+            console.error(
+                "Logout error:",
+                error
+            );
+
+            showMessage(
+                "Unable to logout. Please try again.",
+                "error"
+            );
+        }
+    }
+
+
+    /*
+     * ==========================================
+     * ADD EXPENSE
+     * ==========================================
+     */
+
+    expenseForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+
+            const category =
+                document.getElementById(
+                    "category"
+                ).value;
+
+
+            const amount =
+                document.getElementById(
+                    "expenseAmount"
+                ).value;
+
+
+            const description =
+                document.getElementById(
+                    "description"
+                ).value;
+
+
+            if (!category) {
+
+                showMessage(
+                    "Please select an expense category.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            if (
+                !amount ||
+                Number(amount) <= 0
+            ) {
+
+                showMessage(
+                    "Expense amount must be greater than zero.",
+                    "error"
+                );
+
+                return;
+            }
+
+
+            try {
+
+                /*
+                 * Get CSRF token
+                 */
+                const csrf =
+                    await getCsrfToken();
+
+
+                /*
+                 * Send expense with CSRF header
+                 */
+                const response =
+                    await fetch(
+                        "/api/admin/expenses",
+                        {
+                            method: "POST",
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json",
+
+                                [csrf.headerName]:
+                                    csrf.token
+                            },
+
+                            body: JSON.stringify({
+
+                                category:
+                                    category,
+
+                                amount:
+                                    Number(amount),
+
+                                description:
+                                    description
+
+                            })
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Unable to add expense"
+                    );
+
+                }
+
+
+                expenseForm.reset();
+
+
+                showMessage(
+                    "Expense added successfully.",
+                    "success"
+                );
+
+
+                await loadDashboard();
+
+
+            } catch (error) {
+
+                console.error(
+                    "Add expense error:",
+                    error
+                );
+
+
+                showMessage(
+                    "Failed to add expense. Please try again.",
+                    "error"
+                );
+
+            }
+
+        }
+    );
+
+
+    /*
+     * ==========================================
+     * DONATION SEARCH & FILTERS
+     * ==========================================
+     */
+
+    let allDonations = [];
+    let allExpenses = [];
+
+    const donationSearch =
+        document.getElementById("donationSearch");
+
+    const donationPaymentFilter =
+        document.getElementById("donationPaymentFilter");
+
+    const donationStatusFilter =
+        document.getElementById("donationStatusFilter");
+
+    const clearDonationFilters =
+        document.getElementById("clearDonationFilters");
+
+    donationSearch.addEventListener("input", applyDonationFilters);
+    donationPaymentFilter.addEventListener("change", applyDonationFilters);
+    donationStatusFilter.addEventListener("change", applyDonationFilters);
+
+    clearDonationFilters.addEventListener("click", function () {
+        donationSearch.value = "";
+        donationPaymentFilter.value = "ALL";
+        donationStatusFilter.value = "ALL";
+        applyDonationFilters();
+    });
+
+    function getFilteredDonations() {
+
+        const searchText =
+            donationSearch.value.trim().toLowerCase();
+
+        const paymentMode =
+            donationPaymentFilter.value;
+
+        const status =
+            donationStatusFilter.value;
+
+        return allDonations.filter(function (donation) {
+
+            const searchableText = [
+                donation.donorName,
+                donation.mobileNumber,
+                donation.transactionId,
+                donation.razorpayOrderId,
+                donation.referenceNumber
+            ]
+                .filter(value => value != null)
+                .join(" ")
+                .toLowerCase();
+
+            const matchesSearch =
+                !searchText ||
+                searchableText.includes(searchText);
+
+            const matchesPayment =
+                paymentMode === "ALL" ||
+                donation.paymentMode === paymentMode;
+
+            const matchesStatus =
+                status === "ALL" ||
+                donation.paymentStatus === status;
+
+            return (
+                matchesSearch &&
+                matchesPayment &&
+                matchesStatus
+            );
+        });
+    }
+
+
+    function applyDonationFilters() {
+
+        const filteredDonations =
+            getFilteredDonations();
+
+        renderDonations(filteredDonations);
+
+        const summary =
+            document.getElementById("donationFilterSummary");
+
+        summary.textContent =
+            `Showing ${filteredDonations.length} of ${allDonations.length} donations`;
+    }
+
+
+
+    /*
+     * ==========================================
+     * LOAD DASHBOARD
+     * ==========================================
+     */
+
+    async function loadDashboard() {
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/admin/dashboard"
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to load dashboard"
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+            window.dashboardData = data;
+
+
+            /*
+             * SUMMARY
+             */
+
+            document.getElementById(
+                "totalDonations"
+            ).textContent =
+                data.totalDonations;
+
+
+            document.getElementById(
+                "successfulDonations"
+            ).textContent =
+                data.successfulDonations;
+
+
+            document.getElementById(
+                "totalAmount"
+            ).textContent =
+                formatMoney(
+                    data.totalAmount
+                );
+
+
+            document.getElementById(
+                "totalExpenses"
+            ).textContent =
+                formatMoney(
+                    data.totalExpenses
+                );
+
+
+            document.getElementById(
+                "summaryDonations"
+            ).textContent =
+                formatMoney(
+                    data.totalAmount
+                );
+
+
+            document.getElementById(
+                "summaryExpenses"
+            ).textContent =
+                formatMoney(
+                    data.totalExpenses
+                );
+
+
+            const balanceElement =
+                document.getElementById(
+                    "balance"
+                );
+
+
+            balanceElement.textContent =
+                formatMoney(
+                    data.balance
+                );
+
+
+            balanceElement.className =
+                Number(data.balance) < 0
+                    ? "negative"
+                    : "positive";
+
+
+            /*
+             * DONATION BREAKDOWN
+             */
+
+            const breakdown =
+                data.donationBreakdown || {};
+
+            document.getElementById(
+                "onlineAmount"
+            ).textContent =
+                formatMoney(
+                    breakdown.onlineAmount
+                );
+
+            document.getElementById(
+                "cashAmount"
+            ).textContent =
+                formatMoney(
+                    breakdown.cashAmount
+                );
+
+            document.getElementById(
+                "upiAmount"
+            ).textContent =
+                formatMoney(
+                    breakdown.upiAmount
+                );
+
+            document.getElementById(
+                "bankTransferAmount"
+            ).textContent =
+                formatMoney(
+                    breakdown.bankTransferAmount
+                );
+
+            document.getElementById(
+                "onlineDonations"
+            ).textContent =
+                breakdown.onlineDonations || 0;
+
+            document.getElementById(
+                "offlineDonations"
+            ).textContent =
+                breakdown.offlineDonations || 0;
+
+
+            /*
+             * DONATIONS
+             */
+
+            allDonations =
+                data.recentDonations || [];
+
+            applyDonationFilters();
+
+
+            /*
+             * EXPENSES
+             */
+
+            allExpenses =
+                data.recentExpenses || [];
+
+            renderExpenses(
+                allExpenses
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Dashboard error:",
+                error
+            );
+
+
+            showMessage(
+                "Unable to load dashboard. Make sure Spring Boot is running.",
+                "error"
+            );
+
+        }
+
+    }
+
+
+    /*
+     * ==========================================
+     * RENDER DONATIONS
+     * ==========================================
+     */
+
+    function renderDonations(
+        donations
+    ) {
+
+        const tableBody =
+            document.getElementById(
+                "donationTableBody"
+            );
+
+
+        tableBody.innerHTML = "";
+
+        if (!donations || donations.length === 0) {
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="9" class="no-results">
+                        No donations match your search or filters.
+                    </td>
+                </tr>
+            `;
+        }
+
+        (donations || []).forEach(
+            donation => {
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                let statusClass = "";
+
+
+                if (
+                    donation.paymentStatus
+                    === "SUCCESS"
+                ) {
+
+                    statusClass =
+                        "success";
+
+                } else if (
+                    donation.paymentStatus
+                    === "PENDING"
+                ) {
+
+                    statusClass =
+                        "pending";
+
+                }
+
+
+                row.innerHTML = `
+
+                    <td>
+                        #${donation.id}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            donation.donorName
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            donation.mobileNumber
+                        )}
+                    </td>
+
+                    <td>
+                        ${formatMoney(
+                            donation.amount
+                        )}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            donation.paymentMode
+                        )}
+                    </td>
+
+                    <td>
+                        ${
+                            donation.transactionId
+                            ? escapeHtml(
+                                donation.transactionId
+                            )
+                            : "-"
+                        }
+                    </td>
+
+                    <td>
+                        ${formatDate(
+                            donation.donationDate
+                        )}
+                    </td>
+
+                    <td>
+
+                        <span class="
+                            status
+                            ${statusClass}
+                        ">
+
+                            ${escapeHtml(
+                                donation.paymentStatus
+                            )}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+                        <button
+                            type="button"
+                            class="receipt-btn"
+                            ${donation.paymentStatus !== "SUCCESS" ? "disabled" : ""}
+                            onclick="printDonationReceipt(${donation.id})"
+                        >
+                            🧾 Receipt
+                        </button>
+                    </td>
+
+                `;
+
+
+                tableBody.appendChild(
+                    row
+                );
+
+            }
+        );
+
+
+        document.getElementById(
+            "donationLoading"
+        ).style.display = "none";
+
+
+        document.getElementById(
+            "donationTable"
+        ).style.display = "table";
+
+    }
+
+
+    /*
+     * ==========================================
+     * DONATION RECEIPT
+     * ==========================================
+     */
+
+    function printDonationReceipt(donationId) {
+
+        const donation =
+            allDonations.find(function (item) {
+                return Number(item.id) === Number(donationId);
+            });
+
+        if (!donation) {
+            showMessage(
+                "Donation details could not be found.",
+                "error"
+            );
+            return;
+        }
+
+        if (donation.paymentStatus !== "SUCCESS") {
+            showMessage(
+                "Receipt is available only for successful donations.",
+                "error"
+            );
+            return;
+        }
+
+        const receiptNumber =
+            "GUS-" +
+            new Date(donation.donationDate).getFullYear() +
+            "-" +
+            String(donation.id).padStart(5, "0");
+
+        const receiptWindow = window.open(
+            "",
+            "_blank",
+            "width=850,height=900"
+        );
+
+        if (!receiptWindow) {
+            showMessage(
+                "Please allow pop-ups to print the donation receipt.",
+                "error"
+            );
+            return;
+        }
+
+        const donorName = escapeHtml(donation.donorName);
+        const mobileNumber = escapeHtml(donation.mobileNumber);
+        const amount = formatMoney(donation.amount);
+        const paymentMode = escapeHtml(donation.paymentMode);
+        const transactionId = donation.transactionId
+            ? escapeHtml(donation.transactionId)
+            : "-";
+        const razorpayOrderId = donation.razorpayOrderId
+            ? escapeHtml(donation.razorpayOrderId)
+            : "-";
+        const referenceNumber = donation.referenceNumber
+            ? escapeHtml(donation.referenceNumber)
+            : "-";
+        const donationDate = formatDate(donation.donationDate);
+
+        receiptWindow.document.write(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation Receipt - ${receiptNumber}</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 30px;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f3f4f6;
+            color: #111827;
+        }
+        .receipt {
+            max-width: 760px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 42px;
+            border: 1px solid #d1d5db;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        }
+        .top {
+            text-align: center;
+            border-bottom: 2px solid #111827;
+            padding-bottom: 22px;
+            margin-bottom: 25px;
+        }
+        .top h1 {
+            margin: 0 0 8px;
+            font-size: 28px;
+        }
+        .top p { margin: 5px 0; color: #4b5563; }
+        .title {
+            text-align: center;
+            margin: 25px 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+        .receipt-meta {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        td {
+            padding: 13px 10px;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: top;
+        }
+        td:first-child {
+            width: 38%;
+            font-weight: 700;
+            color: #374151;
+        }
+        .amount {
+            font-size: 25px;
+            font-weight: 700;
+        }
+        .success {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-weight: 700;
+            background: #dcfce7;
+            color: #166534;
+        }
+        .thanks {
+            text-align: center;
+            margin-top: 32px;
+            padding-top: 22px;
+            border-top: 1px dashed #9ca3af;
+            color: #374151;
+            line-height: 1.6;
+        }
+        .print-btn {
+            display: block;
+            margin: 25px auto 0;
+            padding: 11px 24px;
+            border: none;
+            border-radius: 8px;
+            background: #111827;
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        @media print {
+            body { padding: 0; background: #ffffff; }
+            .receipt { border: none; box-shadow: none; max-width: none; }
+            .print-btn { display: none; }
+        }
+        @media (max-width: 600px) {
+            body { padding: 10px; }
+            .receipt { padding: 22px; }
+            .receipt-meta { flex-direction: column; gap: 5px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="receipt">
+        <div class="top">
+            <h1>🙏 శ్రీ శ్రీ మల్లీశ్వర సేవా సమితి</h1>
+            <p>Union of Helping Hands</p>
+            <p>ఆలికాం – పొండర వీధి</p>
+            <p>36వ వార్షికోత్సవ వేడుకలు</p>
+        </div>
+
+        <div class="title">DONATION RECEIPT</div>
+
+        <div class="receipt-meta">
+            <div><strong>Receipt No:</strong> ${receiptNumber}</div>
+            <div><strong>Status:</strong> <span class="success">SUCCESS</span></div>
+        </div>
+
+        <table>
+            <tr><td>Donor Name</td><td>${donorName}</td></tr>
+            <tr><td>Mobile Number</td><td>${mobileNumber}</td></tr>
+            <tr><td>Donation Amount</td><td class="amount">${amount}</td></tr>
+            <tr><td>Payment Mode</td><td>${paymentMode}</td></tr>
+            <tr><td>Transaction ID</td><td>${transactionId}</td></tr>
+            <tr><td>Razorpay Order ID</td><td>${razorpayOrderId}</td></tr>
+            <tr><td>Reference Number</td><td>${referenceNumber}</td></tr>
+            <tr><td>Donation Date</td><td>${donationDate}</td></tr>
+        </table>
+
+        <div class="thanks">
+            <strong>🙏 Thank you for your generous contribution. 🙏</strong><br>
+            Your support helps us organize and celebrate the Ganesh Utsavam.
+        </div>
+
+        <button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+    </div>
+</body>
+</html>
+        `);
+
+        receiptWindow.document.close();
+        receiptWindow.focus();
+    }
+
+
+    /*
+     * ==========================================
+     * CSV EXPORTS
+     * ==========================================
+     */
+
+    function csvEscape(value) {
+
+        if (value === null || value === undefined) {
+            return "";
+        }
+
+        const text = String(value);
+
+        return '"' + text.replaceAll('"', '""') + '"';
+    }
+
+
+    function downloadCsv(filename, headers, rows) {
+
+        const csvRows = [
+            headers,
+            ...rows
+        ].map(function (row) {
+            return row.map(csvEscape).join(",");
+        });
+
+        const csvContent = "\uFEFF" + csvRows.join("\r\n");
+
+        const blob = new Blob(
+            [csvContent],
+            { type: "text/csv;charset=utf-8;" }
+        );
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+    }
+
+
+    function exportDonations(donations, filename) {
+
+        if (!donations || donations.length === 0) {
+            showMessage(
+                "There are no donations to export.",
+                "error"
+            );
+            return;
+        }
+
+        const headers = [
+            "Donation ID",
+            "Donor Name",
+            "Mobile Number",
+            "Amount",
+            "Payment Mode",
+            "Transaction ID",
+            "Razorpay Order ID",
+            "Reference Number",
+            "Notes",
+            "Donation Date",
+            "Payment Status"
+        ];
+
+        const rows = donations.map(function (donation) {
+            return [
+                donation.id,
+                donation.donorName,
+                donation.mobileNumber,
+                Number(donation.amount || 0).toFixed(2),
+                donation.paymentMode,
+                donation.transactionId || "",
+                donation.razorpayOrderId || "",
+                donation.referenceNumber || "",
+                donation.notes || "",
+                formatDate(donation.donationDate),
+                donation.paymentStatus
+            ];
+        });
+
+        downloadCsv(filename, headers, rows);
+
+        showMessage(
+            `${donations.length} donation record(s) exported successfully.`,
+            "success"
+        );
+    }
+
+
+    function exportFilteredDonations() {
+
+        const filteredDonations =
+            getFilteredDonations();
+
+        const date = new Date().toISOString().slice(0, 10);
+
+        exportDonations(
+            filteredDonations,
+            `ganesh-donations-filtered-${date}.csv`
+        );
+    }
+
+
+    function exportAllDonations() {
+
+        const date = new Date().toISOString().slice(0, 10);
+
+        exportDonations(
+            allDonations,
+            `ganesh-donations-all-${date}.csv`
+        );
+    }
+
+
+    function exportExpenses() {
+
+        if (!allExpenses || allExpenses.length === 0) {
+            showMessage(
+                "There are no expenses to export.",
+                "error"
+            );
+            return;
+        }
+
+        const headers = [
+            "Expense ID",
+            "Category",
+            "Amount",
+            "Description",
+            "Expense Date"
+        ];
+
+        const rows = allExpenses.map(function (expense) {
+            return [
+                expense.id,
+                expense.category,
+                Number(expense.amount || 0).toFixed(2),
+                expense.description || "",
+                formatDate(expense.expenseDate)
+            ];
+        });
+
+        const date = new Date().toISOString().slice(0, 10);
+
+        downloadCsv(
+            `ganesh-expenses-${date}.csv`,
+            headers,
+            rows
+        );
+
+        showMessage(
+            `${allExpenses.length} expense record(s) exported successfully.`,
+            "success"
+        );
+    }
+
+
+    function exportFinancialSummary() {
+
+        const breakdown =
+            window.dashboardData?.donationBreakdown || {};
+
+        const headers = [
+            "Metric",
+            "Value"
+        ];
+
+        const rows = [
+            ["Total Donations", allDonations.length],
+            ["Successful Donations", allDonations.filter(d => d.paymentStatus === "SUCCESS").length],
+            ["Total Successful Donation Amount", document.getElementById("totalAmount").textContent],
+            ["Total Expenses", document.getElementById("totalExpenses").textContent],
+            ["Available Balance", document.getElementById("balance").textContent],
+            ["Online Razorpay Amount", formatMoney(breakdown.onlineAmount)],
+            ["Cash Amount", formatMoney(breakdown.cashAmount)],
+            ["UPI Amount", formatMoney(breakdown.upiAmount)],
+            ["Bank Transfer Amount", formatMoney(breakdown.bankTransferAmount)],
+            ["Online Donations", breakdown.onlineDonations || 0],
+            ["Offline Donations", breakdown.offlineDonations || 0]
+        ];
+
+        const date = new Date().toISOString().slice(0, 10);
+
+        downloadCsv(
+            `ganesh-financial-summary-${date}.csv`,
+            headers,
+            rows
+        );
+
+        showMessage(
+            "Financial summary exported successfully.",
+            "success"
+        );
+    }
+
+
+    /*
+     * ==========================================
+     * RENDER EXPENSES
+     * ==========================================
+     */
+
+    function renderExpenses(
+        expenses
+    ) {
+
+        const tableBody =
+            document.getElementById(
+                "expenseTableBody"
+            );
+
+
+        tableBody.innerHTML = "";
+
+
+        expenses.forEach(
+            expense => {
+
+                const row =
+                    document.createElement(
+                        "tr"
+                    );
+
+
+                row.innerHTML = `
+
+                    <td>
+                        #${expense.id}
+                    </td>
+
+                    <td>
+                        ${escapeHtml(
+                            expense.category
+                        )}
+                    </td>
+
+                    <td>
+                        ${formatMoney(
+                            expense.amount
+                        )}
+                    </td>
+
+                    <td>
+                        ${
+                            expense.description
+                            ? escapeHtml(
+                                expense.description
+                            )
+                            : "-"
+                        }
+                    </td>
+
+                    <td>
+                        ${formatDate(
+                            expense.expenseDate
+                        )}
+                    </td>
+
+                    <td>
+
+                        <button
+                            class="delete-btn"
+                            onclick="deleteExpense(
+                                ${expense.id}
+                            )">
+
+                            Delete
+
+                        </button>
+
+                    </td>
+
+                `;
+
+
+                tableBody.appendChild(
+                    row
+                );
+
+            }
+        );
+
+
+        document.getElementById(
+            "expenseLoading"
+        ).style.display = "none";
+
+
+        document.getElementById(
+            "expenseTable"
+        ).style.display = "table";
+
+    }
+
+
+    /*
+     * ==========================================
+     * DELETE EXPENSE
+     * ==========================================
+     */
+
+    async function deleteExpense(id) {
+
+        const confirmed =
+            confirm(
+                "Are you sure you want to delete this expense?"
+            );
+
+
+        if (!confirmed) {
+
+            return;
+
+        }
+
+
+        try {
+
+            /*
+             * Get CSRF token
+             */
+            const csrf =
+                await getCsrfToken();
+
+
+            /*
+             * Delete expense with CSRF header
+             */
+            const response =
+                await fetch(
+                    `/api/admin/expenses/${id}`,
+                    {
+                        method: "DELETE",
+
+                        headers: {
+
+                            [csrf.headerName]:
+                                csrf.token
+
+                        }
+                    }
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Failed to delete expense"
+                );
+
+            }
+
+
+            showMessage(
+                "Expense deleted successfully.",
+                "success"
+            );
+
+
+            await loadDashboard();
+
+
+        } catch (error) {
+
+            console.error(
+                "Delete expense error:",
+                error
+            );
+
+
+            showMessage(
+                "Failed to delete expense.",
+                "error"
+            );
+
+        }
+
+    }
+
+
+    /*
+     * ==========================================
+     * FORMAT MONEY
+     * ==========================================
+     */
+
+    function formatMoney(amount) {
+
+        return "₹" +
+            Number(amount || 0)
+                .toLocaleString(
+                    "en-IN",
+                    {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    }
+                );
+
+    }
+
+
+    /*
+     * ==========================================
+     * FORMAT DATE
+     * ==========================================
+     */
+
+    function formatDate(
+        dateString
+    ) {
+
+        const date =
+            new Date(dateString);
+
+
+        return date.toLocaleString(
+            "en-IN",
+            {
+                day: "2-digit",
+                month: "short",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit"
+            }
+        );
+
+    }
+
+
+    /*
+     * ==========================================
+     * ESCAPE HTML
+     * ==========================================
+     */
+
+    function escapeHtml(value) {
+
+        if (
+            value === null ||
+            value === undefined
+        ) {
+
+            return "";
+
+        }
+
+
+        return String(value)
+
+            .replaceAll(
+                "&",
+                "&amp;"
+            )
+
+            .replaceAll(
+                "<",
+                "&lt;"
+            )
+
+            .replaceAll(
+                ">",
+                "&gt;"
+            )
+
+            .replaceAll(
+                '"',
+                "&quot;"
+            )
+
+            .replaceAll(
+                "'",
+                "&#039;"
+            );
+
+    }
+
+
+    /*
+     * ==========================================
+     * SHOW MESSAGE
+     * ==========================================
+     */
+
+    function showMessage(
+        text,
+        type
+    ) {
+
+        const message =
+            document.getElementById(
+                "message"
+            );
+
+
+        message.textContent = text;
+
+
+        message.className =
+            "message " + type;
+
+
+        setTimeout(
+            function () {
+
+                message.className =
+                    "message";
+
+            },
+            4000
+        );
+
+    }
+
+
+    /*
+     * ==========================================
+     * INITIAL LOAD
+     * ==========================================
+     */
+
+    loadDashboard();
+
+</script>
+
+</body>
+
+</html>

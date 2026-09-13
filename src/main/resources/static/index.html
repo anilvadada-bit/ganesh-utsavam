@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>శ్రీ శ్రీ మల్లీశ్వర సేవా సమితి - Donation</title>
+
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- Hero Section -->
+    <div class="hero">
+
+        <img
+            src="/ganesh.jpg"
+            alt="Ganesh Utsavam"
+            class="ganesh-image"
+        >
+
+        <h1 class="organization-name">
+            శ్రీ శ్రీ మల్లీశ్వర సేవా సమితి
+        
+        </h1>
+
+        <p class="motto">
+            Union of Helping Hands
+        </p>
+
+        <p class="village">
+              ఆలికాం – పొండర వీధి
+        </p>
+
+        <h2 class="utsavam-title">
+            🙏 36వ వార్షికోత్సవ వేడుకలు 🙏
+        </h2>
+
+        <p>
+            Support Our Ganesh Utsavam Celebrations
+        </p>
+
+    </div>
+
+
+    <!-- Donation Card -->
+    <div class="donation-card">
+
+        <h2>Make a Donation</h2>
+
+        <p class="subtitle">
+            Your contribution helps us organize the celebrations.
+        </p>
+
+        <form id="donationForm">
+
+            <!-- Donor Name -->
+            <label for="donorName">
+                Your Name
+            </label>
+
+            <input
+                type="text"
+                id="donorName"
+                placeholder="Enter your name"
+                required
+            >
+
+
+            <!-- Mobile Number -->
+            <label for="mobileNumber">
+                Mobile Number
+            </label>
+
+            <input
+                type="tel"
+                id="mobileNumber"
+                placeholder="Enter mobile number"
+                maxlength="10"
+                required
+            >
+
+
+            <!-- Quick Amount -->
+            <label>
+                Choose Amount
+            </label>
+
+            <div class="amount-buttons">
+
+                <button
+                    type="button"
+                    class="amount-btn"
+                    data-amount="100">
+                    ₹100
+                </button>
+
+                <button
+                    type="button"
+                    class="amount-btn"
+                    data-amount="501">
+                    ₹501
+                </button>
+
+                <button
+                    type="button"
+                    class="amount-btn"
+                    data-amount="1001">
+                    ₹1001
+                </button>
+
+            </div>
+
+
+            <!-- Custom Amount -->
+            <label for="amount">
+                Donation Amount
+            </label>
+
+            <input
+                type="number"
+                id="amount"
+                placeholder="Enter amount"
+                min="1"
+                step="0.01"
+                required
+            >
+
+
+            <!-- Donate Button -->
+            <button
+                type="submit"
+                class="donate-btn">
+                Donate Now
+            </button>
+
+        </form>
+
+
+        <!-- Success / Error Message -->
+        <div id="message"></div>
+
+    </div>
+
+
+    <!-- Footer -->
+    <div class="footer">
+
+        <p>
+            🙏 Thank you for supporting Ganesh Utsavam 🙏
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- Razorpay Checkout -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<!-- Application JavaScript -->
+<script src="/app.js"></script>
+
+</body>
+</html>

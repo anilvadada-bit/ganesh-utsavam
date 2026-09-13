@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Login - Ganesh Utsavam</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 525px;
+            padding: 25px;
+        }
+
+        .login-card {
+            background: white;
+            padding: 45px;
+            border-radius: 18px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 5px;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 0;
+            font-size: 30px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #777;
+            margin: 10px 0 35px;
+            font-size: 18px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 17px;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 22px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #ff7a00;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 17px;
+            border: none;
+            border-radius: 10px;
+            background: #ff7a00;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .login-btn:hover {
+            background: #e86d00;
+        }
+
+        .error-message {
+            background: #ffe5e5;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 25px;
+            color: #666;
+            text-decoration: none;
+            font-size: 17px;
+        }
+
+        .back-link:hover {
+            color: #ff7a00;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <div class="login-card">
+
+        <div class="logo">🙏</div>
+
+        <h1>Admin Login</h1>
+
+        <p class="subtitle">
+            Ganesh Utsavam Administration
+        </p>
+
+        <div id="errorMessage" class="error-message" style="display:none;">
+            Invalid username or password.
+        </div>
+
+        <form id="loginForm" action="/login" method="post">
+
+            <label for="username">
+                Username
+            </label>
+
+            <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Enter admin username"
+                    required
+                    autocomplete="username"
+            >
+
+            <label for="password">
+                Password
+            </label>
+
+            <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter admin password"
+                    required
+                    autocomplete="current-password"
+            >
+
+            <button
+                    type="submit"
+                    class="login-btn">
+                🔐 Login
+            </button>
+
+        </form>
+
+        <a href="/" class="back-link">
+            ← Back to Public Website
+        </a>
+
+    </div>
+
+</div>
+
+<script>
+
+    const loginForm = document.getElementById("loginForm");
+    const errorMessage = document.getElementById("errorMessage");
+    const loginButton = document.querySelector(".login-btn");
+
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.has("error")) {
+        errorMessage.textContent =
+            "Invalid username or password.";
+
+        errorMessage.style.display = "block";
+    }
+
+    loginForm.addEventListener("submit", async function (event) {
+
+        event.preventDefault();
+
+        errorMessage.style.display = "none";
+
+        loginButton.disabled = true;
+        loginButton.textContent = "Logging in...";
+
+        try {
+
+            // Get a fresh CSRF token
+            const response = await fetch("/csrf");
+
+            if (!response.ok) {
+                throw new Error("Unable to get CSRF token");
+            }
+
+            const csrf = await response.json();
+
+            // Create hidden CSRF field
+            let csrfInput = loginForm.querySelector(
+                'input[name="' + csrf.parameterName + '"]'
+            );
+
+            if (!csrfInput) {
+
+                csrfInput = document.createElement("input");
+
+                csrfInput.type = "hidden";
+                csrfInput.name = csrf.parameterName;
+
+                loginForm.appendChild(csrfInput);
+            }
+
+            csrfInput.value = csrf.token;
+
+            /*
+             * IMPORTANT:
+             * Let the browser perform the normal form POST.
+             * Do NOT use fetch() for /login.
+             */
+            HTMLFormElement.prototype.submit.call(loginForm);
+
+        } catch (error) {
+
+            console.error(error);
+
+            errorMessage.textContent =
+                "Unable to connect to the server.";
+
+            errorMessage.style.display = "block";
+
+            loginButton.disabled = false;
+            loginButton.textContent = "🔐 Login";
+        }
+
+    });
+
+</script>
+
+
+</body>
+
+</html>
