@@ -22,6 +22,8 @@ public class RateLimitFilter extends OncePerRequestFilter {
     private final Map<String, RequestCounter> requestCounters =
             new ConcurrentHashMap<>();
 
+    private long lastCleanupTime = Instant.now().getEpochSecond();
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -39,22 +41,20 @@ public class RateLimitFilter extends OncePerRequestFilter {
             return;
         }
 
-        String clientIp = getClientIp(request);
+        String clientIp = request.getRemoteAddr();
+
+        long now = Instant.now().getEpochSecond();
+
+        cleanupOldEntries(now);
 
         RequestCounter counter = requestCounters.compute(
                 clientIp,
                 (key, existing) -> {
 
-                    long now = Instant.now().getEpochSecond();
-
                     if (existing == null
-                            || now - existing.windowStart
-                            >= WINDOW_SECONDS) {
+                            || now - existing.windowStart >= WINDOW_SECONDS) {
 
-                        return new RequestCounter(
-                                now,
-                                1
-                        );
+                        return new RequestCounter(now, 1);
                     }
 
                     existing.count++;
@@ -64,9 +64,6 @@ public class RateLimitFilter extends OncePerRequestFilter {
         if (counter.count > MAX_REQUESTS) {
 
             response.setStatus(429);
-
-           
-
             response.setContentType("application/json");
 
             response.getWriter().write(
@@ -90,18 +87,26 @@ public class RateLimitFilter extends OncePerRequestFilter {
                 || "/api/payments/verify".equals(path);
     }
 
-    private String getClientIp(HttpServletRequest request) {
+    private void cleanupOldEntries(long now) {
 
-        String forwardedFor =
-                request.getHeader("X-Forwarded-For");
-
-        if (forwardedFor != null
-                && !forwardedFor.isBlank()) {
-
-            return forwardedFor.split(",")[0].trim();
+        // Cleanup approximately once every 5 minutes
+        if (now - lastCleanupTime < 300) {
+            return;
         }
 
-        return request.getRemoteAddr();
+        synchronized (this) {
+
+            if (now - lastCleanupTime < 300) {
+                return;
+            }
+
+            requestCounters.entrySet().removeIf(
+                    entry -> now - entry.getValue().windowStart
+                            >= WINDOW_SECONDS
+            );
+
+            lastCleanupTime = now;
+        }
     }
 
     private static class RequestCounter {
@@ -109,10 +114,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
         private final long windowStart;
         private int count;
 
-        private RequestCounter(
-                long windowStart,
-                int count) {
-
+        private RequestCounter(long windowStart, int count) {
             this.windowStart = windowStart;
             this.count = count;
         }
